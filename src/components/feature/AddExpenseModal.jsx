@@ -14,28 +14,54 @@ const AddExpenseModal = memo(({ isOpen, onClose, groupId = null }) => {
     paidBy: currentUserId,
     category: DEFAULT_CATEGORY,
     splitType: SPLIT_TYPES.EQUAL,
+    selectedGroup: groupId || '',
     selectedMembers: [currentUserId],
     customSplits: {},
   });
 
   const [errors, setErrors] = useState({});
 
-  // Get available members based on group
+  // Get all groups as options
+  const groupOptions = useMemo(() => {
+    return [
+      { value: '', label: 'No Group (Select Individual Members)' },
+      ...Object.values(groups).map(group => ({
+        value: group.id,
+        label: group.name,
+      }))
+    ];
+  }, [groups]);
+
+  // Get available members based on selected group
   const availableMembers = useMemo(() => {
-    if (groupId && groups[groupId]) {
-      return groups[groupId].members
+    const selectedGroupId = formData.selectedGroup || groupId;
+    if (selectedGroupId && groups[selectedGroupId]) {
+      return groups[selectedGroupId].members
         .map((memberId) => users[memberId])
         .filter(Boolean);
     }
     return Object.values(users);
-  }, [groupId, groups, users]);
+  }, [formData.selectedGroup, groupId, groups, users]);
 
   const handleInputChange = useCallback((field, value) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    setFormData((prev) => {
+      const newData = { ...prev, [field]: value };
+      
+      // If group selection changed, auto-populate members
+      if (field === 'selectedGroup') {
+        if (value && groups[value]) {
+          newData.selectedMembers = groups[value].members;
+        } else {
+          newData.selectedMembers = [currentUserId];
+        }
+      }
+      
+      return newData;
+    });
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: null }));
     }
-  }, [errors]);
+  }, [errors, groups, currentUserId]);
 
   const toggleMember = useCallback((memberId) => {
     setFormData((prev) => {
@@ -105,7 +131,7 @@ const AddExpenseModal = memo(({ isOpen, onClose, groupId = null }) => {
       amount: toFixed(amount),
       paidBy: formData.paidBy,
       category: formData.category,
-      groupId,
+      groupId: formData.selectedGroup || groupId || null,
       splits,
     };
 
@@ -119,6 +145,7 @@ const AddExpenseModal = memo(({ isOpen, onClose, groupId = null }) => {
       paidBy: currentUserId,
       category: DEFAULT_CATEGORY,
       splitType: SPLIT_TYPES.EQUAL,
+      selectedGroup: groupId || '',
       selectedMembers: [currentUserId],
       customSplits: {},
     });
@@ -215,6 +242,17 @@ const AddExpenseModal = memo(({ isOpen, onClose, groupId = null }) => {
           fullWidth
         />
 
+        {/* Group Selection */}
+        {!groupId && (
+          <Select
+            label="Select Group (Optional)"
+            value={formData.selectedGroup}
+            onChange={(e) => handleInputChange('selectedGroup', e.target.value)}
+            options={groupOptions}
+            fullWidth
+          />
+        )}
+
         {/* Split Type */}
         <Select
           label="Split Type"
@@ -229,24 +267,38 @@ const AddExpenseModal = memo(({ isOpen, onClose, groupId = null }) => {
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
             {LABELS.SPLIT_BETWEEN} <span className="text-danger-500">*</span>
+            {formData.selectedGroup && (
+              <span className="ml-2 text-xs text-primary-600 font-normal">
+                (Auto-populated from group)
+              </span>
+            )}
           </label>
-          <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded-lg p-3">
-            {availableMembers.map((user) => (
-              <label
-                key={user.id}
-                className="flex items-center gap-3 p-2 hover:bg-gray-50 rounded cursor-pointer"
-              >
-                <input
-                  type="checkbox"
-                  checked={formData.selectedMembers.includes(user.id)}
-                  onChange={() => toggleMember(user.id)}
-                  className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
-                />
-                <span className="text-sm font-medium text-gray-900">
-                  {user.id === currentUserId ? 'You' : user.name}
-                </span>
-              </label>
-            ))}
+          <div className="space-y-2 max-h-48 overflow-y-auto border border-gray-300 rounded-lg p-3 bg-gray-50">
+            {availableMembers.length === 0 ? (
+              <p className="text-sm text-gray-500 text-center py-2">
+                No members available. Please select a group or individual members.
+              </p>
+            ) : (
+              availableMembers.map((user) => (
+                <label
+                  key={user.id}
+                  className="flex items-center gap-3 p-2 hover:bg-white rounded cursor-pointer transition-colors"
+                >
+                  <input
+                    type="checkbox"
+                    checked={formData.selectedMembers.includes(user.id)}
+                    onChange={() => toggleMember(user.id)}
+                    className="w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
+                  />
+                  <span className="flex items-center gap-2">
+                    <span className="text-lg">{user.avatar}</span>
+                    <span className="text-sm font-medium text-gray-900">
+                      {user.id === currentUserId ? 'You' : user.name}
+                    </span>
+                  </span>
+                </label>
+              ))
+            )}
           </div>
           {errors.members && (
             <p className="mt-1 text-sm text-danger-500">{errors.members}</p>

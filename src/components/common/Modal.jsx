@@ -58,7 +58,7 @@ const Modal = memo(({
     >
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black bg-opacity-50 transition-opacity"
+        className="fixed inset-0 bg-gradient-to-br from-gray-900/60 to-gray-900/80 backdrop-blur-sm transition-opacity duration-300"
         style={{ zIndex: Z_INDEX.MODAL_BACKDROP }}
         onClick={handleBackdropClick}
       />
@@ -66,20 +66,22 @@ const Modal = memo(({
       {/* Modal content */}
       <div className="flex min-h-full items-center justify-center p-4">
         <div
-          className={`relative bg-white rounded-lg shadow-xl w-full ${sizeClasses[size]} transform transition-all`}
+          className={`relative bg-white/95 backdrop-blur-sm rounded-3xl shadow-soft-xl w-full ${sizeClasses[size]} transform transition-all animate-slide-up`}
           style={{ zIndex: Z_INDEX.MODAL }}
           onClick={handleContentClick}
         >
           {/* Header */}
           {(title || showCloseButton) && (
-            <div className="flex items-center justify-between p-4 border-b border-gray-200">
+            <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
               {title && (
-                <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+                <h3 className="text-xl font-bold bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent">
+                  {title}
+                </h3>
               )}
               {showCloseButton && (
                 <button
                   onClick={onClose}
-                  className="text-gray-400 hover:text-gray-600 transition-colors p-1 rounded-full hover:bg-gray-100"
+                  className="text-gray-400 hover:text-danger-600 transition-all duration-200 p-2 rounded-xl hover:bg-danger-50 hover:scale-110 active:scale-95"
                   aria-label="Close modal"
                 >
                   <svg
@@ -87,7 +89,7 @@ const Modal = memo(({
                     fill="none"
                     strokeLinecap="round"
                     strokeLinejoin="round"
-                    strokeWidth="2"
+                    strokeWidth="2.5"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
                   >
@@ -99,13 +101,13 @@ const Modal = memo(({
           )}
 
           {/* Body */}
-          <div className="p-4 max-h-[70vh] overflow-y-auto">
+          <div className="px-6 py-5 max-h-[70vh] overflow-y-auto">
             {children}
           </div>
 
           {/* Footer */}
           {footer && (
-            <div className="flex items-center justify-end gap-3 p-4 border-t border-gray-200">
+            <div className="flex items-center justify-end gap-3 px-6 py-5 border-t border-gray-100 bg-gray-50/50 rounded-b-3xl">
               {footer}
             </div>
           )}

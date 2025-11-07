@@ -1,22 +1,35 @@
 export const COLORS = {
-  PRIMARY: '#3b82f6',
-  PRIMARY_DARK: '#2563eb',
-  PRIMARY_LIGHT: '#dbeafe',
-  SUCCESS: '#22c55e',
-  SUCCESS_LIGHT: '#dcfce7',
-  DANGER: '#ef4444',
-  DANGER_LIGHT: '#fee2e2',
+  // Softer, more modern purple-blue gradient palette
+  PRIMARY: '#6366f1', // Softer indigo
+  PRIMARY_DARK: '#4f46e5',
+  PRIMARY_LIGHT: '#eef2ff',
+  SECONDARY: '#8b5cf6', // Soft purple
+  SECONDARY_LIGHT: '#f5f3ff',
+  SUCCESS: '#10b981', // Softer emerald green
+  SUCCESS_LIGHT: '#d1fae5',
+  DANGER: '#f43f5e', // Softer rose red
+  DANGER_LIGHT: '#ffe4e6',
   WARNING: '#f59e0b',
   WARNING_LIGHT: '#fef3c7',
-  GRAY_50: '#f9fafb',
-  GRAY_100: '#f3f4f6',
-  GRAY_200: '#e5e7eb',
-  GRAY_300: '#d1d5db',
-  GRAY_500: '#6b7280',
-  GRAY_700: '#374151',
-  GRAY_900: '#111827',
+  INFO: '#06b6d4', // Soft cyan
+  INFO_LIGHT: '#cffafe',
+  // Neutral grays with warmer tones
+  GRAY_50: '#fafaf9',
+  GRAY_100: '#f5f5f4',
+  GRAY_200: '#e7e5e4',
+  GRAY_300: '#d6d3d1',
+  GRAY_400: '#a8a29e',
+  GRAY_500: '#78716c',
+  GRAY_600: '#57534e',
+  GRAY_700: '#44403c',
+  GRAY_800: '#292524',
+  GRAY_900: '#1c1917',
   WHITE: '#ffffff',
   BLACK: '#000000',
+  // Additional soft accent colors
+  ACCENT_TEAL: '#14b8a6',
+  ACCENT_PINK: '#ec4899',
+  ACCENT_AMBER: '#fbbf24',
 };
 
 export const SPACING = {

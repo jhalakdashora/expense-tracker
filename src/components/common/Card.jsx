@@ -12,21 +12,21 @@ const Card = memo(({
   const paddingClasses = {
     none: '',
     sm: 'p-3',
-    md: 'p-4',
+    md: 'p-5',
     lg: 'p-6',
   };
 
   const shadowClasses = {
     none: '',
     sm: 'shadow-sm',
-    md: 'shadow-md',
-    lg: 'shadow-lg',
+    md: 'shadow-soft',
+    lg: 'shadow-soft-lg',
   };
 
-  const hoverClass = hoverable ? 'hover:shadow-lg transition-shadow duration-200 cursor-pointer' : '';
+  const hoverClass = hoverable ? 'hover:shadow-soft-lg hover:-translate-y-0.5 transition-all duration-300 cursor-pointer' : '';
   const clickableClass = onClick ? 'cursor-pointer' : '';
 
-  const classes = `bg-white rounded-lg ${paddingClasses[padding]} ${shadowClasses[shadow]} ${hoverClass} ${clickableClass} ${className}`;
+  const classes = `bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 ${paddingClasses[padding]} ${shadowClasses[shadow]} ${hoverClass} ${clickableClass} ${className}`;
 
   return (
     <div className={classes} onClick={onClick}>

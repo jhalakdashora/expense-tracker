@@ -31,14 +31,14 @@ const ExpenseItem = memo(({ expense, onClick, onDelete }) => {
     <Card
       hoverable
       onClick={onClick}
-      className="border-l-4"
+      className="border-l-4 group"
       style={{ borderLeftColor: isPayment ? '#6b7280' : categoryInfo.color }}
     >
       <div className="flex items-start gap-3">
         {/* Category Icon */}
         <div
-          className="flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-xl"
-          style={{ backgroundColor: `${categoryInfo.color}20` }}
+          className="flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center text-2xl shadow-sm group-hover:scale-110 transition-transform duration-300"
+          style={{ backgroundColor: `${categoryInfo.color}15` }}
         >
           {categoryInfo.icon}
         </div>
@@ -47,10 +47,10 @@ const ExpenseItem = memo(({ expense, onClick, onDelete }) => {
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
             <div className="flex-1 min-w-0">
-              <h4 className="font-semibold text-gray-900 truncate">
+              <h4 className="font-bold text-gray-900 truncate text-base">
                 {description}
               </h4>
-              <p className="text-sm text-gray-600 mt-0.5">
+              <p className="text-sm text-gray-600 mt-1">
                 {paidByUser?.name || 'Unknown'} paid {formatCurrency(amount)}
               </p>
             </div>
@@ -58,16 +58,16 @@ const ExpenseItem = memo(({ expense, onClick, onDelete }) => {
             {/* Amount and Actions */}
             <div className="flex items-start gap-2 flex-shrink-0">
               <div className="text-right">
-                <p className="font-semibold text-gray-900">
+                <p className="font-bold text-gray-900 text-lg">
                   {formatCurrency(amount)}
                 </p>
                 {!isPaidByCurrentUser && userShare > 0 && (
-                  <p className={`text-sm mt-0.5 ${userShare > 0 ? 'text-danger-600' : 'text-success-600'}`}>
+                  <p className="text-sm mt-1 px-2 py-0.5 bg-danger-100 text-danger-700 rounded-lg font-semibold inline-block">
                     You owe {formatCurrency(userShare)}
                   </p>
                 )}
                 {isPaidByCurrentUser && splits.length > 1 && (
-                  <p className="text-sm text-success-600 mt-0.5">
+                  <p className="text-sm mt-1 px-2 py-0.5 bg-success-100 text-success-700 rounded-lg font-semibold inline-block">
                     You lent {formatCurrency(amount - userShare)}
                   </p>
                 )}
@@ -77,7 +77,7 @@ const ExpenseItem = memo(({ expense, onClick, onDelete }) => {
               {onDelete && (
                 <button
                   onClick={handleDelete}
-                  className="p-2 text-gray-400 hover:text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
+                  className="p-2 text-gray-400 hover:text-danger-600 hover:bg-danger-50 rounded-xl transition-all duration-200 hover:scale-110"
                   aria-label="Delete expense"
                   title="Delete expense"
                 >
@@ -98,10 +98,16 @@ const ExpenseItem = memo(({ expense, onClick, onDelete }) => {
           </div>
 
           {/* Date and Split Info */}
-          <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
-            <span>{formatRelativeDate(date)}</span>
+          <div className="flex items-center gap-2 mt-2.5 text-xs text-gray-500 font-medium">
+            <span className="flex items-center gap-1">
+              <span>🕐</span>
+              {formatRelativeDate(date)}
+            </span>
             <span>•</span>
-            <span>{splits.length} {splits.length === 1 ? 'person' : 'people'}</span>
+            <span className="flex items-center gap-1">
+              <span>👤</span>
+              {splits.length} {splits.length === 1 ? 'person' : 'people'}
+            </span>
           </div>
         </div>
       </div>

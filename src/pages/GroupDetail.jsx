@@ -16,10 +16,11 @@ import {
 
 const GroupDetail = memo(() => {
   const { groupId } = useParams();
-  const { groups, expenses, currentUserId, users, deleteExpense } = useApp();
+  const { groups, expenses, currentUserId, users, deleteExpense, updateGroup } = useApp();
   const [isAddExpenseOpen, setIsAddExpenseOpen] = useState(false);
   const [settleUpBalance, setSettleUpBalance] = useState(null);
   const [showSimplified, setShowSimplified] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
 
   const group = groups[groupId];
 
@@ -58,6 +59,17 @@ const GroupDetail = memo(() => {
     deleteExpense(expenseId);
   }, [deleteExpense]);
 
+  const handleToggleSimplifyDebts = useCallback(() => {
+    const updatedGroup = {
+      ...group,
+      simplifyDebts: !group.simplifyDebts,
+    };
+    updateGroup(updatedGroup);
+    if (!updatedGroup.simplifyDebts) {
+      setShowSimplified(false); // Reset to normal view if simplification is disabled
+    }
+  }, [group, updateGroup]);
+
   if (!group) {
     return (
       <div className="min-h-screen bg-gray-50">
@@ -77,13 +89,23 @@ const GroupDetail = memo(() => {
         title={group.name}
         showBack
         actions={
-          <Button
-            onClick={() => setIsAddExpenseOpen(true)}
-            size="sm"
-            icon={<span>➕</span>}
-          >
-            <span className="hidden sm:inline">Add Expense</span>
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setShowSettings(!showSettings)}
+              icon={<span>⚙️</span>}
+            >
+              <span className="hidden sm:inline">Settings</span>
+            </Button>
+            <Button
+              onClick={() => setIsAddExpenseOpen(true)}
+              size="sm"
+              icon={<span>➕</span>}
+            >
+              <span className="hidden sm:inline">Add Expense</span>
+            </Button>
+          </div>
         }
       />
 
@@ -107,6 +129,29 @@ const GroupDetail = memo(() => {
               </div>
             </div>
           </div>
+
+          {/* Group Settings */}
+          {showSettings && (
+            <div className="mb-4 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">Group Settings</h3>
+              <label className="flex items-start gap-3 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={group.simplifyDebts !== false}
+                  onChange={handleToggleSimplifyDebts}
+                  className="mt-1 w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
+                />
+                <div className="flex-1">
+                  <span className="text-sm font-medium text-gray-900 block">
+                    Simplify Debts
+                  </span>
+                  <span className="text-xs text-gray-600 block mt-1">
+                    When enabled, debts will be automatically simplified to minimize the number of transactions needed to settle all balances.
+                  </span>
+                </div>
+              </label>
+            </div>
+          )}
 
           {/* Group Members */}
           <div>
@@ -135,16 +180,18 @@ const GroupDetail = memo(() => {
           <section className="mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xl font-bold text-gray-900">Balances</h2>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setShowSimplified(!showSimplified)}
-              >
-                {showSimplified ? 'Show My Balances' : 'Simplify Debts'}
-              </Button>
+              {group.simplifyDebts !== false && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowSimplified(!showSimplified)}
+                >
+                  {showSimplified ? 'Show My Balances' : 'Simplify Debts'}
+                </Button>
+              )}
             </div>
 
-            {showSimplified ? (
+            {showSimplified && group.simplifyDebts !== false ? (
               <div className="space-y-3">
                 {simplifiedDebts.length === 0 ? (
                   <Card>

@@ -12,6 +12,7 @@ const AddGroupModal = memo(({ isOpen, onClose }) => {
     name: '',
     description: '',
     selectedMembers: [currentUserId],
+    simplifyDebts: true,
   });
 
   const [errors, setErrors] = useState({});
@@ -63,6 +64,7 @@ const AddGroupModal = memo(({ isOpen, onClose }) => {
       name: formData.name.trim(),
       description: formData.description.trim(),
       members: formData.selectedMembers,
+      simplifyDebts: formData.simplifyDebts,
     };
 
     addGroup(group);
@@ -73,6 +75,7 @@ const AddGroupModal = memo(({ isOpen, onClose }) => {
       name: '',
       description: '',
       selectedMembers: [currentUserId],
+      simplifyDebts: true,
     });
     setErrors({});
   }, [formData, validateForm, addGroup, onClose, currentUserId]);
@@ -155,6 +158,26 @@ const AddGroupModal = memo(({ isOpen, onClose }) => {
           {errors.members && (
             <p className="mt-1 text-sm text-danger-500">{errors.members}</p>
           )}
+        </div>
+
+        {/* Simplify Debts Toggle */}
+        <div className="border-t border-gray-200 pt-4">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={formData.simplifyDebts}
+              onChange={(e) => handleInputChange('simplifyDebts', e.target.checked)}
+              className="mt-1 w-4 h-4 text-primary-600 rounded focus:ring-primary-500"
+            />
+            <div className="flex-1">
+              <span className="text-sm font-medium text-gray-900 block">
+                Simplify Debts
+              </span>
+              <span className="text-xs text-gray-600 block mt-1">
+                Automatically minimize the number of transactions needed to settle all debts in this group
+              </span>
+            </div>
+          </label>
         </div>
       </form>
     </Modal>

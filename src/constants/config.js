@@ -1,5 +1,5 @@
 export const APP_CONFIG = {
-  APP_NAME: 'SplitWise Clone',
+  APP_NAME: 'Sata Bata',
   CURRENCY: 'USD',
   CURRENCY_SYMBOL: '$',
   DATE_FORMAT: 'MMM DD, YYYY',

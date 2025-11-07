@@ -27,7 +27,7 @@ const Input = memo(forwardRef(({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-semibold text-gray-700 mb-2"
         >
           {label}
           {required && <span className="text-danger-500 ml-1">*</span>}
@@ -53,18 +53,19 @@ const Input = memo(forwardRef(({
           disabled={disabled}
           required={required}
           className={`
-            block w-full rounded-lg border ${errorClass}
-            ${icon ? 'pl-10' : 'pl-3'} pr-3 py-2
-            text-gray-900 placeholder-gray-400
+            block w-full rounded-xl border-2 ${errorClass}
+            ${icon ? 'pl-10' : 'pl-4'} pr-4 py-2.5
+            text-gray-900 placeholder-gray-400 font-medium
             focus:outline-none focus:ring-2 focus:border-transparent
-            disabled:bg-gray-100 disabled:cursor-not-allowed
-            transition-colors duration-200
+            disabled:bg-gray-50 disabled:cursor-not-allowed
+            transition-all duration-200 shadow-sm
+            hover:shadow-md focus:shadow-md
           `}
         />
       </div>
 
       {(error || helperText) && (
-        <p className={`mt-1 text-sm ${error ? 'text-danger-500' : 'text-gray-500'}`}>
+        <p className={`mt-1.5 text-sm font-medium ${error ? 'text-danger-600' : 'text-gray-500'}`}>
           {error || helperText}
         </p>
       )}

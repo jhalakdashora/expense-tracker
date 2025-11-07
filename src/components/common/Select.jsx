@@ -24,7 +24,7 @@ const Select = memo(({
       {label && (
         <label
           htmlFor={selectId}
-          className="block text-sm font-medium text-gray-700 mb-1"
+          className="block text-sm font-semibold text-gray-700 mb-2"
         >
           {label}
           {required && <span className="text-danger-500 ml-1">*</span>}
@@ -39,16 +39,17 @@ const Select = memo(({
         disabled={disabled}
         required={required}
         className={`
-          block w-full rounded-lg border ${errorClass}
-          px-3 py-2 pr-10
-          text-gray-900
+          block w-full rounded-xl border-2 ${errorClass}
+          px-4 py-2.5 pr-10
+          text-gray-900 font-medium
           focus:outline-none focus:ring-2 focus:border-transparent
-          disabled:bg-gray-100 disabled:cursor-not-allowed
-          transition-colors duration-200
+          disabled:bg-gray-50 disabled:cursor-not-allowed
+          transition-all duration-200 shadow-sm
+          hover:shadow-md focus:shadow-md
           appearance-none bg-white
-          bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%225%22%20viewBox%3D%220%200%2010%205%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M0%200l5%205%205-5z%22/%3E%3C/svg%3E')]
+          bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2210%22%20height%3D%225%22%20viewBox%3D%220%200%2010%205%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20fill%3D%22%236366f1%22%20d%3D%22M0%200l5%205%205-5z%22/%3E%3C/svg%3E')]
           bg-no-repeat
-          bg-[right_0.75rem_center]
+          bg-[right_1rem_center]
           bg-[length:0.75rem]
         `}
       >
@@ -65,7 +66,7 @@ const Select = memo(({
       </select>
 
       {error && (
-        <p className="mt-1 text-sm text-danger-500">{error}</p>
+        <p className="mt-1.5 text-sm font-medium text-danger-600">{error}</p>
       )}
     </div>
   );
