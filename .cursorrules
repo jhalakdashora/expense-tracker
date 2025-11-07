@@ -1,0 +1,351 @@
+# React Frontend Web Application - Cursor Rules
+
+## Project Overview
+This is a React frontend web application built with mobile-first responsive design principles, optimized performance, and modular architecture.
+
+## Core Principles
+
+### 1. DRY (Don't Repeat Yourself)
+- NEVER duplicate code - extract reusable logic into utilities, hooks, or components
+- If code appears more than once, refactor it into a shared module
+- Use constants files for any repeated values (API endpoints, colors, strings, configurations)
+- Create custom hooks for shared stateful logic
+- Abstract common patterns into utility functions
+
+### 2. Modular Architecture
+- Organize code by feature/domain, not by file type
+- Each module should be self-contained and have clear boundaries
+- Use barrel exports (index.js) for clean imports
+- Keep related files close together
+
+### 3. Component Structure
+- ONLY use functional components (no class components)
+- Keep components small and focused (single responsibility)
+- Prefer composition over inheritance
+- Extract complex logic into custom hooks
+- Maximum 200 lines per component - split if larger
+
+### 4. Mobile-First Responsive Design
+- Always start with mobile design, then scale up
+- Use CSS media queries: mobile-first approach (min-width, not max-width)
+- Test all UI changes on mobile, tablet, and desktop viewports
+- Use responsive units (rem, em, %, vh, vw) over fixed pixels
+- Ensure touch targets are at least 44x44px for mobile
+- Use flexbox and CSS Grid for responsive layouts
+- Consider mobile performance (bundle size, image optimization)
+
+### 5. Performance Optimization
+- Always use React.memo() for components that receive same props frequently
+- Use useMemo() for expensive calculations
+- Use useCallback() for functions passed to child components
+- Implement code splitting with React.lazy() and Suspense
+- Optimize images: use modern formats (WebP), lazy loading, proper sizing
+- Minimize bundle size: tree shaking, dynamic imports
+- Avoid unnecessary re-renders
+- Use virtualization for long lists (react-window, react-virtual)
+- Debounce/throttle expensive operations (search, scroll handlers)
+
+## File Structure
+
+```
+src/
+├── components/           # Reusable UI components
+│   ├── common/          # Generic components (Button, Input, Card)
+│   ├── layout/          # Layout components (Header, Footer, Sidebar)
+│   └── feature/         # Feature-specific components
+├── pages/               # Page components (route components)
+├── hooks/               # Custom React hooks
+├── utils/               # Utility functions (pure functions)
+│   ├── helpers.js       # General helper functions
+│   ├── validators.js    # Validation logic
+│   ├── formatters.js    # Data formatting functions
+│   └── api.js           # API call functions
+├── constants/           # Constants and configuration
+│   ├── index.js         # Barrel export
+│   ├── api.js           # API endpoints
+│   ├── routes.js        # Route paths
+│   ├── messages.js      # UI messages and strings
+│   ├── config.js        # App configuration
+│   └── theme.js         # Colors, spacing, breakpoints
+├── services/            # API services and external integrations
+├── context/             # React Context providers
+├── assets/              # Static assets (images, fonts)
+├── styles/              # Global styles and CSS modules
+└── types/               # TypeScript types (if using TS)
+```
+
+## Coding Standards
+
+### Constants Usage
+- ALL hardcoded values MUST be in constants files
+- API endpoints → `constants/api.js`
+- Routes → `constants/routes.js`
+- UI strings → `constants/messages.js`
+- Colors, spacing → `constants/theme.js`
+- Magic numbers → Extract to named constants
+- Feature flags → `constants/config.js`
+
+Example:
+```javascript
+// ❌ BAD
+const url = 'https://api.example.com/users';
+const color = '#3B82F6';
+
+// ✅ GOOD
+import { API_ENDPOINTS } from '@/constants/api';
+import { COLORS } from '@/constants/theme';
+
+const url = API_ENDPOINTS.USERS;
+const color = COLORS.PRIMARY;
+```
+
+### Utility Functions
+- Extract ALL reusable logic to utils/
+- Pure functions only (no side effects)
+- Properly documented with JSDoc
+- Include input validation
+- Write testable functions
+
+Example structure:
+```javascript
+// utils/formatters.js
+export const formatCurrency = (amount, currency = 'USD') => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency,
+  }).format(amount);
+};
+
+export const formatDate = (date, format = 'short') => {
+  // implementation
+};
+```
+
+### Custom Hooks
+- Extract stateful logic into custom hooks
+- Name hooks with 'use' prefix
+- Keep hooks focused and single-purpose
+- Document hook parameters and return values
+
+Example:
+```javascript
+// hooks/useDebounce.js
+export const useDebounce = (value, delay = 500) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+  
+  useEffect(() => {
+    const handler = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(handler);
+  }, [value, delay]);
+  
+  return debouncedValue;
+};
+```
+
+### Component Patterns
+
+#### Component Template
+```javascript
+import React, { memo } from 'react';
+import PropTypes from 'prop-types';
+import styles from './ComponentName.module.css';
+
+const ComponentName = memo(({ prop1, prop2, onAction }) => {
+  // Hooks first
+  const [state, setState] = useState(null);
+  
+  // Event handlers
+  const handleAction = useCallback(() => {
+    // implementation
+  }, [dependencies]);
+  
+  // Early returns
+  if (!prop1) return null;
+  
+  // Main render
+  return (
+    <div className={styles.container}>
+      {/* JSX */}
+    </div>
+  );
+});
+
+ComponentName.propTypes = {
+  prop1: PropTypes.string.isRequired,
+  prop2: PropTypes.number,
+  onAction: PropTypes.func,
+};
+
+ComponentName.defaultProps = {
+  prop2: 0,
+  onAction: () => {},
+};
+
+ComponentName.displayName = 'ComponentName';
+
+export default ComponentName;
+```
+
+### State Management
+- Use useState for local component state
+- Use useReducer for complex state logic
+- Use Context API for app-wide state (theme, auth, etc.)
+- Consider external libraries (Zustand, Redux Toolkit) only for complex apps
+- Keep state as close to where it's used as possible
+- Lift state up only when necessary
+
+### API Calls
+- Centralize all API calls in `services/` or `utils/api.js`
+- Use async/await over promises
+- Implement proper error handling
+- Create custom hooks for data fetching (useQuery pattern)
+- Cache responses when appropriate
+
+Example:
+```javascript
+// services/userService.js
+import { API_ENDPOINTS } from '@/constants/api';
+
+export const userService = {
+  getUser: async (userId) => {
+    const response = await fetch(`${API_ENDPOINTS.USERS}/${userId}`);
+    if (!response.ok) throw new Error('Failed to fetch user');
+    return response.json();
+  },
+  
+  updateUser: async (userId, data) => {
+    // implementation
+  },
+};
+
+// hooks/useUser.js
+export const useUser = (userId) => {
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  useEffect(() => {
+    userService.getUser(userId)
+      .then(setUser)
+      .catch(setError)
+      .finally(() => setLoading(false));
+  }, [userId]);
+  
+  return { user, loading, error };
+};
+```
+
+### Styling
+- Use CSS Modules for component-scoped styles
+- Use CSS variables for theming (defined in constants/theme.js)
+- Mobile-first media queries
+- Use BEM naming convention within CSS modules
+- Avoid inline styles except for dynamic values
+- Use styled-components or Tailwind only if already set up
+
+Example:
+```css
+/* ComponentName.module.css */
+.container {
+  padding: var(--spacing-md);
+  background: var(--color-bg-primary);
+}
+
+/* Mobile first - then add larger breakpoints */
+@media (min-width: 768px) {
+  .container {
+    padding: var(--spacing-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: var(--spacing-xl);
+  }
+}
+```
+
+### Naming Conventions
+- Components: PascalCase (UserProfile.jsx)
+- Files: camelCase (userService.js, formatters.js)
+- Constants: UPPER_SNAKE_CASE (API_ENDPOINTS, DEFAULT_TIMEOUT)
+- Functions: camelCase (getUserData, formatCurrency)
+- Hooks: camelCase with 'use' prefix (useAuth, useFetch)
+- Event handlers: handle* prefix (handleClick, handleSubmit)
+- Boolean props/variables: is*, has*, should* (isLoading, hasError)
+
+## Code Quality Checklist
+
+Before completing any task, verify:
+- [ ] No code duplication (DRY principle applied)
+- [ ] All magic values extracted to constants
+- [ ] Reusable logic moved to utils or hooks
+- [ ] Components are functional (no class components)
+- [ ] Mobile-responsive design implemented
+- [ ] Performance optimizations applied (memo, useMemo, useCallback)
+- [ ] Proper error handling implemented
+- [ ] PropTypes or TypeScript types defined
+- [ ] Accessibility considerations (ARIA labels, keyboard navigation)
+- [ ] Clean imports (absolute paths using @/ alias)
+- [ ] Console logs removed
+- [ ] Comments added for complex logic only
+
+## Anti-Patterns to Avoid
+- ❌ NO class components
+- ❌ NO hardcoded strings, numbers, or URLs in components
+- ❌ NO duplicate code blocks
+- ❌ NO inline styles (except dynamic values)
+- ❌ NO large monolithic components (>200 lines)
+- ❌ NO prop drilling beyond 2-3 levels (use Context)
+- ❌ NO missing dependency arrays in useEffect
+- ❌ NO mutating state directly
+- ❌ NO console.logs in production code
+- ❌ NO fetch calls directly in components
+
+## Performance Checklist
+- [ ] React.memo() used for frequently re-rendering components
+- [ ] useMemo() for expensive calculations
+- [ ] useCallback() for functions passed as props
+- [ ] Code splitting with React.lazy() for routes
+- [ ] Image optimization (WebP, lazy loading, srcset)
+- [ ] Debounce/throttle for expensive operations
+- [ ] Virtual scrolling for long lists
+- [ ] Minimize bundle size
+
+## Accessibility
+- Use semantic HTML elements
+- Add ARIA labels where needed
+- Ensure keyboard navigation works
+- Maintain proper heading hierarchy
+- Ensure sufficient color contrast
+- Provide alt text for images
+- Make interactive elements focusable
+
+## Testing Considerations
+- Write testable code (pure functions, isolated components)
+- Separate business logic from UI components
+- Use dependency injection for services
+- Mock API calls in tests
+
+## Git Commit Messages
+- Use conventional commits format
+- feat: New feature
+- fix: Bug fix
+- refactor: Code refactoring
+- style: Formatting changes
+- perf: Performance improvements
+- docs: Documentation
+- test: Testing
+
+## Additional Notes
+- When refactoring, always maintain backward compatibility
+- Document complex logic with comments
+- Keep dependencies up to date
+- Use environment variables for configuration
+- Implement proper error boundaries
+- Log errors to monitoring service (Sentry, etc.)
+
+---
+
+Remember: Write code that is clean, maintainable, performant, and mobile-responsive. Every line should serve a purpose, and no code should be repeated.
+
